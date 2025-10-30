@@ -1,5 +1,5 @@
 // =============================
-// Clean Water Catch - Project 6
+// Clean Water Catch - Project 6 (Polished)
 // =============================
 
 // ---------- Difficulty Config ----------
@@ -11,11 +11,13 @@ const DIFFICULTY = {
 
 // ---------- State ----------
 let score = 0;
+let high = Number(localStorage.getItem('cwc_high') || 0);
 let timeLeft = DIFFICULTY.normal.time;
 let gameActive = false;
 let timerId = null;
 let spawnId = null;
 let currentMode = 'normal';
+let muted = false;
 const shownMilestones = new Set();
 
 // Milestones (LevelUp): array + conditionals
@@ -28,14 +30,17 @@ const milestones = [
 
 // ---------- Elements ----------
 const scoreEl   = document.getElementById('score');
+const highEl    = document.getElementById('high');
 const timerEl   = document.getElementById('timer');
 const gameArea  = document.getElementById('game-area');
 const messageEl = document.getElementById('message');
 const startBtn  = document.getElementById('start-btn');
 const resetBtn  = document.getElementById('reset-btn');
 const modeSel   = document.getElementById('mode');
+const muteBtn   = document.getElementById('mute-btn');
 const confetti  = document.getElementById('confetti');
 const ctx       = confetti.getContext('2d');
+highEl.textContent = high;
 
 // ---------- Canvas Sizing ----------
 function sizeCanvas(){
@@ -50,7 +55,8 @@ let audioCtx = null;
 function ensureAudio(){
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 }
-function playTone(freq = 660, duration = 0.12, type = 'sine', volume = 0.08){
+function playTone(freq = 660, duration = 0.12, type = 'sine', volume = 0.1){
+  if (muted) return;
   ensureAudio();
   const osc = audioCtx.createOscillator();
   const gain = audioCtx.createGain();
@@ -61,10 +67,9 @@ function playTone(freq = 660, duration = 0.12, type = 'sine', volume = 0.08){
   osc.start();
   setTimeout(()=>{ osc.stop(); }, duration * 1000);
 }
-function playSuccess(){ playTone(740, 0.11, 'sine', 0.12); }
-function playFail(){    playTone(160, 0.16, 'square', 0.12); }
+const playSuccess = () => playTone(740, 0.11, 'sine', 0.12);
+const playFail    = () => playTone(160, 0.16, 'square', 0.12);
 function playWin(){
-  // small arpeggio
   playTone(660, 0.10, 'sine', 0.14);
   setTimeout(()=>playTone(880, 0.10, 'sine', 0.14), 120);
   setTimeout(()=>playTone(990, 0.12, 'triangle', 0.14), 240);
@@ -80,7 +85,6 @@ function applyMode(mode){
 
 function startGame(){
   if (gameActive) return;
-  // init state
   shownMilestones.clear();
   gameActive = true;
   score = 0;
@@ -103,8 +107,17 @@ function endGame(showFinal = true){
   timerId = spawnId = null;
 
   if (showFinal){
-    messageEl.style.color = '#2E9DF7';
-    messageEl.textContent = `Time’s up! Final Score: ${score}`;
+    // high score
+    if (score > high){
+      high = score;
+      localStorage.setItem('cwc_high', String(high));
+      highEl.textContent = high;
+      messageEl.style.color = '#159A48';
+      messageEl.textContent = `New High Score: ${high} 🎉`;
+    } else {
+      messageEl.style.color = '#2E9DF7';
+      messageEl.textContent = `Time’s up! Final Score: ${score}`;
+    }
   }
   startBtn.style.display = 'inline-block';
   resetBtn.style.display = 'none';
@@ -130,7 +143,7 @@ function tick(){
   timerEl.textContent = timeLeft;
 }
 
-// ---------- Helpers: visual feedback ----------
+// ---------- Visual helpers ----------
 function flyText(text, color, x, y){
   const f = document.createElement('div');
   f.className = 'fly';
@@ -139,7 +152,7 @@ function flyText(text, color, x, y){
   f.style.left = `${x}px`;
   f.style.top = `${y}px`;
   document.body.appendChild(f);
-  setTimeout(()=>f.remove(), 650);
+  setTimeout(()=>f.remove(), 700);
 }
 function splash(x, y){
   const s = document.createElement('div');
@@ -176,7 +189,6 @@ function spawnDrop(){
     y += speed;
     drop.style.top = `${y}px`;
 
-    // off screen bottom
     if (y > gameArea.clientHeight){
       clearInterval(fallId);
       drop.remove();
@@ -189,7 +201,6 @@ function spawnDrop(){
     clearInterval(fallId);
     drop.remove();
 
-    // position for fly text/splash
     const r = drop.getBoundingClientRect();
     const cx = r.left + r.width/2;
     const cy = r.top + r.height/2;
@@ -268,7 +279,6 @@ function startConfetti(){
     }
   };
   draw();
-  // auto stop after 4 seconds
   setTimeout(stopConfetti, 4000);
 }
 function stopConfetti(){
@@ -290,6 +300,13 @@ function checkWinCelebrate(){
 startBtn.addEventListener('click', startGame);
 resetBtn.addEventListener('click', resetGame);
 modeSel.addEventListener('change', (e)=> {
-  // apply immediately if not running; else take effect next round
   if (!gameActive) applyMode(e.target.value);
 });
+muteBtn.addEventListener('click', ()=>{
+  muted = !muted;
+  muteBtn.setAttribute('aria-pressed', String(muted));
+  muteBtn.textContent = muted ? '🔇' : '🔊';
+});
+
+// First paint values
+applyMode('normal');

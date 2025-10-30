@@ -11,12 +11,27 @@
 </head>
 <body>
   <main class="container">
-    <h1>💧 Clean Water Catch</h1>
-    <p class="instructions">Tap the clean drops and avoid the polluted ones!</p>
+    <header class="header">
+      <div class="logo">
+        <!-- tiny CSS/SVG jerry can for brand vibes -->
+        <svg width="28" height="32" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="#FFC907" d="M7 2h6l2 2h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/>
+          <rect x="9" y="10" width="6" height="8" rx="3" fill="#2E9DF7"/>
+        </svg>
+        <h1>Clean Water Catch</h1>
+      </div>
+      <div class="header-actions">
+        <button id="mute-btn" class="icon-btn" aria-pressed="false" title="Toggle sound">🔊</button>
+        <a class="btn ghost" href="#how-to-play">How to play</a>
+      </div>
+    </header>
+
+    <p class="tagline">Tap the clean drops and avoid the polluted ones!</p>
 
     <section class="topbar">
       <div class="stats" aria-label="Game Stats">
         <p>Score: <span id="score">0</span></p>
+        <p>High: <span id="high">0</span></p>
         <p>Time: <span id="timer">30</span>s</p>
       </div>
 
@@ -30,16 +45,27 @@
       </div>
     </section>
 
+    <!-- Game field with animated waves -->
     <section id="game-area" class="game-area" aria-label="Game Area"></section>
+
     <p id="message" class="message" aria-live="polite"></p>
 
     <div class="controls">
-      <button id="start-btn" type="button">Start Game</button>
-      <button id="reset-btn" type="button" style="display:none;">Reset</button>
+      <button id="start-btn" class="btn primary" type="button">Start Game</button>
+      <button id="reset-btn" class="btn yellow" type="button" style="display:none;">Reset</button>
     </div>
 
     <!-- Confetti canvas for celebration -->
     <canvas id="confetti" class="confetti" aria-hidden="true"></canvas>
+
+    <section id="how-to-play" class="panel">
+      <h2>How to play</h2>
+      <ul>
+        <li>Tap <strong>blue</strong> drops (+10). Avoid <strong>dark</strong> drops (−15).</li>
+        <li>Pick a difficulty to change the pace, time, and win score.</li>
+        <li>Hit score milestones to see quick facts about clean water.</li>
+      </ul>
+    </section>
 
     <footer class="footer">
       <p>
