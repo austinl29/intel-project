@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Clean Water Catch</title>
+
+  <!-- Brand-adjacent font (Avenir fallback + Nunito Sans) -->
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>💧 Clean Water Catch</h1>
+    <p class="instructions">Tap the clean drops and avoid the polluted ones!</p>
+
+    <section class="topbar">
+      <div class="stats" aria-label="Game Stats">
+        <p>Score: <span id="score">0</span></p>
+        <p>Time: <span id="timer">30</span>s</p>
+      </div>
+
+      <div class="difficulty" aria-label="Difficulty Select">
+        <label for="mode">Difficulty:</label>
+        <select id="mode">
+          <option value="easy">Easy</option>
+          <option value="normal" selected>Normal</option>
+          <option value="hard">Hard</option>
+        </select>
+      </div>
+    </section>
+
+    <section id="game-area" class="game-area" aria-label="Game Area"></section>
+    <p id="message" class="message" aria-live="polite"></p>
+
+    <div class="controls">
+      <button id="start-btn" type="button">Start Game</button>
+      <button id="reset-btn" type="button" style="display:none;">Reset</button>
+    </div>
+
+    <!-- Confetti canvas for celebration -->
+    <canvas id="confetti" class="confetti" aria-hidden="true"></canvas>
+
+    <footer class="footer">
+      <p>
+        Inspired by <a href="https://www.charitywater.org/" target="_blank" rel="noopener noreferrer">charity: water</a>.
+        Learn more or donate
+        <a href="https://www.charitywater.org/donate" target="_blank" rel="noopener noreferrer">here</a>.
+      </p>
+    </footer>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
